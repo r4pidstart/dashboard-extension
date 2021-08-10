@@ -1,3 +1,6 @@
+// todo
+// add 24hour to 12hour option
+
 const form=document.querySelector("#form");
 const todoList=document.querySelector("#todoList");
 const ddayList=document.querySelector("#ddayList");
@@ -6,9 +9,36 @@ let usingDate=false;
 let todos=[];
 let ddays=[];
 
+function updateTodo()
+{
+    todoList.querySelectorAll("li").forEach(item => todoList.removeChild(item));
+    todos.forEach(paintTodo);
+}
+
+function updateDday()
+{
+    ddayList.querySelectorAll("li").forEach(item => ddayList.removeChild(item));
+    ddays.forEach(paintDday);
+}
+
+function deleteDday(e)
+{
+    ddays=ddays.filter(item => item.id!=e.target.parentElement.id);
+    localStorage.setItem("ddays", JSON.stringify(ddays));
+    updateDday();
+}
+
+function deleteTodo(e)
+{
+    todos=todos.filter(item => item.id!=e.target.parentElement.id);
+    localStorage.setItem("todos", JSON.stringify(todos));
+    updateTodo();
+}
+
 function paintDday(newDday)
 {
     let li=document.createElement("li");
+    li.id=newDday.id;
     let span1=document.createElement("span");
     span1.innerText=newDday.text
 
@@ -20,6 +50,7 @@ function paintDday(newDday)
 
     let button=document.createElement("button");
     button.innerText="X";
+    button.addEventListener("click", deleteDday);
 
     li.appendChild(span1);
     li.appendChild(span2);
@@ -30,11 +61,13 @@ function paintDday(newDday)
 function paintTodo(newTodo)
 {
     let li=document.createElement("li");
+    li.id=newTodo.id;
     let span=document.createElement("span");
     span.innerText=newTodo.text;
 
     let button=document.createElement("button");
     button.innerText="X";
+    button.addEventListener("click", deleteTodo);
 
     li.appendChild(span);
     li.appendChild(button);
@@ -113,14 +146,9 @@ function loadData()
         ddays.forEach(paintDday);
 }
 
-function updateDday()
-{
-    ddayList.querySelectorAll("li").forEach(item => ddayList.removeChild(item));
-    ddays.forEach(paintDday);
-}
 
 loadData();
-setInterval(updateDday, 1000); // to update dday
+setInterval(updateDday, 10000); // to update dday
 form.querySelector("input[type=checkbox]").addEventListener("click", toggleType);
 form.addEventListener("submit", submitHandler);
 
